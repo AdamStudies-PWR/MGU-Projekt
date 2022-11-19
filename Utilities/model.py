@@ -43,3 +43,42 @@ class Network(nn.Module):
         model = model.to(self.device)
         model = self.set_up_weights(model)
         return model
+
+    def forward(self):
+        self.gen_colours = self.unet(self.L)
+
+    def set_required_grads(self, model, value):
+        for parameter in model.parameters():
+            parameter.requires_grad = value
+
+    def backward_1(self):
+        gen_img = torch.cat([self.L, self.gen_colours], dim=1)
+        gen_predicates = self.discriminator(gen_img.detach())
+        self.gen_gan_loss = self.gan(False, gen_predicates)
+        train_img = torch.cat([self.L, self.ab], dim=1)
+        train_predicates = self.discriminator(train_img)
+        self.train_gan_loss = self.gan(True, train_predicates)
+        self.gan_loss = (self.gen_gan_loss + self.train_gan_loss) * 0.5
+        self.gan_loss.backward()
+    
+    def backward_2(self):
+        gen_img = torch.cat([self.L, self.gen_colour], dim=1)
+        gen_predicates = self.discriminator(gen_img)
+        self.gan_loss = self.gan(True, gen_predicates)
+        self.loss_loss = self.loss(self.gen_colours, self.ab) * 100.
+        self.loss_combined = self.gan_loss + self.loss_loss
+        self.loss_combined.backward()
+
+    def optimize(self):
+        self.forward()
+        self.discriminator.train()
+        self.set_required_grads(self.discriminator, True)
+        self.opt_2.zero_grad()
+        self._backward_1()
+        self.opt_2.step()\
+        
+        self.unet.train()
+        self.set_required_grads(self.discriminator, False)
+        self.opt_1.zero_grad()
+        self.backward_2()
+        self.opt_1.step()
