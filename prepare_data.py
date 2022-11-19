@@ -1,11 +1,13 @@
-import cv2
 import os
 import sys
+
+import cv2
+
 
 args  = sys.argv
 
 if len(args) <= 1:
-    print("No arguments provided - aborting!")
+    print("No path provided - aborting!")
     exit(0)
 
 path = args[1]
@@ -14,9 +16,9 @@ if not os.path.exists(path):
     print("Invalid path")
     exit(0)
 
-bnw = path + "/bnw"
-colour = path + "/colour"
-og = path + "/og"
+bnw = os.path.join(path, "bnw")
+colour = os.path.join(path, "/colour")
+og = os.path.join(path, "og")
 
 os.makedirs(bnw)
 os.makedirs(colour)
@@ -35,6 +37,6 @@ for file in os.listdir(path):
         hc = cv2.resize(hc, [100, 100], interpolation=cv2.INTER_AREA)
         hbnw = cv2.resize(hbnw, [100, 100], interpolation=cv2.INTER_AREA)
 
-        cv2.imwrite(bnw + "/" + file, hbnw)
-        cv2.imwrite(colour + "/" + file, hc)
-        os.rename(filepath, og + "/" + file)
+        cv2.imwrite(os.path.join(bnw, file), hbnw)
+        cv2.imwrite(os.path.join(colour, file), hc)
+        os.rename(filepath, os.path.join(og, file))

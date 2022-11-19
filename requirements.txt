@@ -1,1 +1,6 @@
+alive_progress
+numpy
 opencv-python
+pillow
+torch
+torchvision
