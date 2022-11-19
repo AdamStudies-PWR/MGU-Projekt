@@ -12,14 +12,16 @@ class Network(nn.Module):
         super().__init__()
         
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        print("Got device: " + str(self.device))
+
         self.discriminator = self.make_model(Discriminator())
         self.unet = self.make_model(Unet(self.device))
         self.gan = Gan().to(self.device)
         self.loss = nn.L1Loss()
-        self.opt_1 = optim.Adam(self.unet.parametres(), lr=2e-4, betas=(0.5, 0.999))
-        self.opt_2 = optim.Adam(self.discriminator.parametres(), lr=2e-4, betas=(0.5, 0.999))
+        self.opt_1 = optim.Adam(self.unet.parameters(), lr=2e-4, betas=(0.5, 0.999))
+        self.opt_2 = optim.Adam(self.discriminator.parameters(), lr=2e-4, betas=(0.5, 0.999))
     
-    def setup_input(self, data):
+    def set_up_input(self, data):
         self.L = data['L'].to(self.device)
         self.ab = data['ab'].to(self.device)
 
