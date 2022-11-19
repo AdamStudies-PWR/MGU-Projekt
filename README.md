@@ -1,4 +1,4 @@
-# MGU---Kolorowanie-Obraz-w
+# MGU Koloryzowanie obrazów
 Projekt na Metody Głębokiego Uczenia - PWR
 
 ## Instrukcje

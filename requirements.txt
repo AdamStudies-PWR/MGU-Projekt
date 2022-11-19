@@ -2,5 +2,6 @@ alive_progress
 numpy
 opencv-python
 pillow
+scikit-image
 torch
 torchvision

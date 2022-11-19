@@ -1,13 +1,13 @@
 import os
 import shutil
 import sys
-
 import torch
 
 from alive_progress import alive_bar
 
 from Utilities.local_dataset import make_dataloader
 from Utilities.model import Network
+
 
 MODEL_FOLDER = "model"
 MODEL_PATH = os.path.join(MODEL_FOLDER + "model.pt")
@@ -32,7 +32,7 @@ if len(args) <= 1:
 
 path = args[1]
 
-if not os.path.exists(path):
+if not os.path.exists(path) and not os.path.isdir(path):
     print("Invalid path")
     exit(0)
 
