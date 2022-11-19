@@ -16,7 +16,8 @@ MODEL_PATH = os.path.join(MODEL_FOLDER + "model.pt")
 # maybe add some prints here
 def train_model(model, train_data, val_data, epochs=100):
     data = next(iter(val_data))
-    for _ in range(epochs):
+    for i in range(epochs):
+        print("[" + str(i) + "/" + str(epochs) + "]")
         with alive_bar(len(train_data)) as bar:
             for data in train_data:
                 model.set_up_input(data)
