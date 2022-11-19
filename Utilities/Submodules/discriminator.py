@@ -6,10 +6,10 @@ class Discriminator(nn.Module):
         self.model = self.make_model()
 
     def make_model(self):
-        model = [self.make_layers(3, 64, 2, norm=True, act=False)]
-        model = model + [self.make_layers(62 * 2 ** i, 64 * 2 ** (i + 1), 1 if i == 2 else 2, norm=False, act=True)
+        model = [self.make_layers(3, 25, 2, norm=True, act=False)]
+        model = model + [self.make_layers(25 * 2 ** i, 25 * 2 ** (i + 1), 1 if i == 2 else 2, norm=False, act=True)
             for i in range(3)]
-        model = model + [self.make_layers(512, 1, 1, norm=False, act=False)]
+        model = model + [self.make_layers(200, 1, 1, norm=False, act=False)]
         return nn.Sequential(*model)
 
 

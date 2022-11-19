@@ -62,7 +62,7 @@ class Network(nn.Module):
         self.gan_loss.backward()
     
     def backward_2(self):
-        gen_img = torch.cat([self.L, self.gen_colour], dim=1)
+        gen_img = torch.cat([self.L, self.gen_colours], dim=1)
         gen_predicates = self.discriminator(gen_img)
         self.gan_loss = self.gan(True, gen_predicates)
         self.loss_loss = self.loss(self.gen_colours, self.ab) * 100.
@@ -74,7 +74,7 @@ class Network(nn.Module):
         self.discriminator.train()
         self.set_required_grads(self.discriminator, True)
         self.opt_2.zero_grad()
-        self._backward_1()
+        self.backward_1()
         self.opt_2.step()\
         
         self.unet.train()
