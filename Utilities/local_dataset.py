@@ -3,6 +3,7 @@ import os
 import numpy as np
 
 from PIL import Image
+from skimage.color import rgb2lab
 from torch.utils.data import DataLoader
 from torchvision import transforms
 
@@ -14,7 +15,8 @@ class LocalDataset():
 
     def load_img(self, img_path):
         img = Image.open(img_path)
-        img = np.array(img, dtype=float)
+        img = np.array(img)
+        img = rgb2lab(img).astype("float32")
         img = transforms.ToTensor()(img)
         return img
 

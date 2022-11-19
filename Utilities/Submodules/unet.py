@@ -6,7 +6,7 @@ from torch import nn
 class BaseUnet(nn.Module):
     def __init__(self, f1, f2, f3):
         super().__init__ ()
-        self.conv = nn.Conv2d(f3, f2, kernel_size=4, stride=2, padding=1, bias=False)
+        self.conv = nn.Conv2d(f3, f2, kernel_size=3, stride=2, padding=1, bias=False)
         self.leaky = nn.LeakyReLU(0.2, True)
         self.norm_1 = nn.BatchNorm2d(f2)
         self.relu = nn.ReLU(True)
@@ -19,7 +19,7 @@ class InnerBlock(BaseUnet):
         self.model = self.make_model(f1, f2)
     
     def make_model(self, f1, f2):
-        trans_conv = nn.ConvTranspose2d(f2, f1, kernel_size=4, stride=2, padding=1, bias=False)
+        trans_conv = nn.ConvTranspose2d(f2, f1, kernel_size=3, stride=2, padding=1, bias=False)
         down = [self.leaky, self.conv]
         up = [self.relu, trans_conv, self.norm_2]
         model = down + up
@@ -35,7 +35,7 @@ class MiddleBlock(BaseUnet):
         self.model = self.make_model(f1, f2, submodule, dropout)
 
     def make_model(self, f1, f2, submodule, dropout):
-        trans_conv = nn.ConvTranspose2d(f2 *  2, f1, kernel_size=4, stride=2, padding=1, bias=False)
+        trans_conv = nn.ConvTranspose2d(f2 *  2, f1, kernel_size=3, stride=2, padding=1, bias=False)
         down = [self.leaky, self.conv, self.norm_1]
         up = [self.relu, trans_conv, self.norm_2]
         if dropout:
@@ -53,7 +53,7 @@ class OuterBlock(BaseUnet):
         self.model = self.make_model(f1, f2, submodule)
     
     def make_model(self, f1, f2, submodule):
-        trans_conv = nn.ConvTranspose2d(f2 * 2, f1, kernel_size=4, stride=2, padding=1)
+        trans_conv = nn.ConvTranspose2d(f2 * 2, f1, kernel_size=3, stride=2, padding=1)
         down = [self.conv]
         up = [self.relu, trans_conv, nn.Tanh()]
         model = down + [submodule] + up
@@ -68,15 +68,15 @@ class Unet(nn.Module):
         super().__init__()
 
         self.device = device
-        self.filters = 512
+        self.filters = 200
         self.model = self.make_model()
 
     def make_model(self):
         block = InnerBlock(self.filters, self.filters, self.filters)
         for _ in range(3):
-            block = MiddleBlock(self.filters, self.filters, self.filters, submodule=block)
+            block = MiddleBlock(self.filters, self.filters, self.filters, submodule=block, dropout=True)
         for _ in range(3):
-            block = MiddleBlock(self.filters // 2, self.filters, self.filters, submodule=block, dropout=False)
+            block = MiddleBlock(self.filters // 2, self.filters, self.filters // 2, submodule=block, dropout=False)
             self.filters //= 2
         return OuterBlock(2, self.filters, 1, submodule=block)
 
