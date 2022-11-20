@@ -10,7 +10,7 @@ from Utilities.model import Network
 
 
 MODEL_FOLDER = "model"
-MODEL_PATH = os.path.join(MODEL_FOLDER + "model.pt")
+MODEL_PATH = os.path.join(MODEL_FOLDER, "model.pt")
 
 
 # maybe add some prints here

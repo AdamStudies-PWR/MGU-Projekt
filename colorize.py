@@ -1,6 +1,9 @@
 import os
+import shutil
 import sys
 import torch
+
+import numpy as np
 
 from PIL import Image
 from skimage.color import lab2rgb
@@ -10,13 +13,14 @@ from Utilities.model import Network
 
 
 MODEL_FOLDER = "model"
-MODEL_PATH = os.path.join(MODEL_FOLDER + "model.pt")
+MODEL_PATH = os.path.join(MODEL_FOLDER, "model.pt")
 RESULT_PATH = "result"
 
 
 def get_images(batch, cpu):
     batch = (batch + 1.) * 50.
     cpu = cpu * 110.
+    batch = torch.cat([batch, cpu], dim=1).permute(0, 2, 3, 1).cpu().numpy()
     images = []
     for img in batch:
         img = lab2rgb(img)
@@ -56,11 +60,17 @@ with torch.no_grad():
 colorized = get_images(tensor.unsqueeze(0), predicates.cpu())
 
 print("Saving result...")
+
+if os.path.exists(RESULT_PATH):
+    shutil.rmtree(RESULT_PATH)
+os.mkdir(RESULT_PATH)
+
 filename = os.path.basename(path)
 filename = os.path.join(RESULT_PATH, filename)
 counter = 0
 for img in colorized:
-    img.save(os.path.join(filename, "-colorized" + counter + ".png"))
+    img = Image.fromarray(np.uint8(img))
+    img.save(filename + "-colorized" + str(counter) + ".png")
     counter = counter + 1
 
 print("Finished")
