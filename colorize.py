@@ -69,6 +69,7 @@ filename = os.path.basename(path)
 filename = os.path.join(RESULT_PATH, filename)
 counter = 0
 for img in colorized:
+    img = img * 255
     img = Image.fromarray(np.uint8(img))
     img.save(filename + "-colorized" + str(counter) + ".png")
     counter = counter + 1
