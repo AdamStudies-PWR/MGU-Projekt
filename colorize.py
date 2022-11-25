@@ -12,8 +12,6 @@ from torchvision import transforms
 from Utilities.model import Network
 
 
-MODEL_FOLDER = "model"
-MODEL_PATH = os.path.join(MODEL_FOLDER, "model.pt")
 RESULT_PATH = "result"
 
 
@@ -30,25 +28,26 @@ def get_images(batch, cpu):
 
 args = sys.argv
 
-if len(args) <= 1:
+if len(args) <= 2:
     print("No path provided - aborting!")
     exit(0)
 
 path = args[1]
+model_path = args[2]
 
 if not os.path.exists(path) and not os.path.isfile(path):
     print("Invalid path")
     exit(0)
 
-if not os.path.exists(MODEL_PATH) and not os.path.isfile(MODEL_PATH):
-    print("Model does not exist - run train.py first")
+if not os.path.exists(model_path) and not os.path.isfile(model_path):
+    print("Invalid model file - run train.py first")
     exit(0)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 print("Loading model...")
 model = Network()
-model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
+model.load_state_dict(torch.load(model_path, map_location=device))
 
 img = Image.open(path)
 tensor = transforms.ToTensor()(img)[:1] * 2. - 1.
@@ -69,7 +68,6 @@ filename = os.path.basename(path)
 filename = os.path.join(RESULT_PATH, filename)
 counter = 0
 for img in colorized:
-    img = img * 255
     img = Image.fromarray(np.uint8(img))
     img.save(filename + "-colorized" + str(counter) + ".png")
     counter = counter + 1

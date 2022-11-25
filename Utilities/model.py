@@ -8,14 +8,19 @@ from Utilities.Submodules.ganloss import Gan
 
 
 class Network(nn.Module):
-    def __init__(self):
+    def __init__(self, resnet=None):
         super().__init__()
         
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         print("Got device: " + str(self.device))
 
         self.discriminator = self.make_model(Discriminator())
-        self.unet = self.make_model(Unet(self.device))
+
+        if resnet is not None:
+            self.unet = self.make_model(Unet())
+        else:
+            self.unet = resnet
+
         self.gan = Gan().to(self.device)
         self.loss = nn.L1Loss()
         self.opt_1 = optim.Adam(self.unet.parameters(), lr=2e-4, betas=(0.5, 0.999))

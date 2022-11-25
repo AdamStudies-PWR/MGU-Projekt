@@ -1,4 +1,5 @@
 alive_progress
+fastai
 numpy
 opencv-python
 pillow
