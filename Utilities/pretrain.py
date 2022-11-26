@@ -17,12 +17,15 @@ def pretrain_resnet(model, train_data, device, epochs=20):
 
     for i in range(epochs):
         print("[" + str(i + 1) + "/" + str(epochs) + "]")
-        L, ab = train_data['L'].to(device), train_data['ab'].to(device)
-        predicates = model(L)
-        loss = criterion(predicates, ab)
-        opt.zero_grad()
-        loss.backward()
-        opt.step()
+        with alive_bar(len(train_data)) as bar:
+            for data in train_data:
+                L, ab = data['L'].to(device), data['ab'].to(device)
+                predicates = model(L)
+                loss = criterion(predicates, ab)
+                opt.zero_grad()
+                loss.backward()
+                opt.step()
+                bar()
 
 
 def get_pretrained(train_data, device):
