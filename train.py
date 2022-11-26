@@ -41,8 +41,12 @@ print("Creating data loaders...")
 train = make_dataloader(os.path.join(path, "bnw"))
 validate = make_dataloader(os.path.join(path, "colour"))
 
+print("Seraching for device...")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print("Got device: " + str(device))
+
 print("Building model...")
-model = Network()
+model = Network(device)
 
 print("Training model...")
 train_model(model, train, validate)
