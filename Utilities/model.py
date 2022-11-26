@@ -8,12 +8,10 @@ from Utilities.Submodules.ganloss import Gan
 
 
 class Network(nn.Module):
-    def __init__(self, resnet=None):
+    def __init__(self, device, resnet=None):
         super().__init__()
         
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        print("Got device: " + str(self.device))
-
+        self.device = device
         self.discriminator = self.make_model(Discriminator())
 
         if resnet is not None:
