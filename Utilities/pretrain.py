@@ -1,8 +1,15 @@
+import os
+import torch
+
 from alive_progress import alive_bar
 from fastai.vision.learner import create_body
 from fastai.vision.models.unet import DynamicUnet
 from torch import nn, optim
 from torchvision import models
+
+
+MODEL_FOLDER = "model"
+MODEL_PATH = os.path.join(MODEL_FOLDER, "resnet-pretrained.pt")
 
 
 def build_res_unet(device, n_input=1, n_output=2, size=100):
@@ -28,11 +35,22 @@ def pretrain_resnet(model, train_data, device, epochs=20):
                 bar()
 
 
-def get_pretrained(train_data, device):
+def gen_or_load(train_data, device):
     resnet = build_res_unet(device)
-    pretrain_resnet(resnet, train_data, device)
+    if os.path.exists(MODEL_PATH):
+        print("Pretrained state found - loading...")
+        resnet.load_state_dict(torch.load(MODEL_PATH, map_location=device))
+    else:
+        print("Pretraining resnet...")
+        pretrain_resnet(resnet, train_data, device)
+        print("Saving state...")
+        torch.save(resnet.state_dict(), MODEL_PATH)
 
     return resnet
+
+
+def get_pretrained(train_data, device):
+    return gen_or_load(train_data, device)
 
 
 def get_resnet(device):

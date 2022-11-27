@@ -6,9 +6,8 @@ import os
 import sys
 import torch
 
-from alive_progress import alive_bar
-
 from Utilities.local_dataset import make_dataloader
+from Utilities.logger import Logger
 from Utilities.model import Network
 from Utilities.pretrain import get_pretrained
 
@@ -17,15 +16,22 @@ MODEL_PATH = os.path.join(MODEL_FOLDER, "resnet-model.pt")
 
 
 # maybe add some prints here
-def train_model(model, train_data, val_data, epochs=10):
+def train_model(model, train_data, val_data, epochs=10, display=200):
     data = next(iter(val_data))
-    for i in range(epochs):
-        print("[" + str(i + 1) + "/" + str(epochs) + "]")
-        with alive_bar(len(train_data)) as bar:
-            for data in train_data:
-                model.set_up_input(data)
-                model.optimize()
-                bar()
+    for epoch in range(epochs):
+        loss_info = Logger.create_loss_data()
+        loss_counter = 0
+        for data in train_data:
+            model.set_up_input(data)
+            model.optimize()
+            Logger.update_loss(model, loss_info, count=data['L'].size(0))
+            loss_counter = loss_counter + 1
+            if loss_counter % display == 0:
+                print(f"\nEpoch {epoch+1}/{epochs}")
+                print(f"Iteration {loss_counter}/{len(train_data)}")
+                Logger.log_results(loss_info)
+                Logger.visualize(model, data, save=False) 
+
 
 
 args = sys.argv
@@ -48,7 +54,7 @@ print("Seraching for device...")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Got device: " + str(device))
 
-print("Pretraining resnet...")
+print("Getting pretrained resnet...")
 resnet = get_pretrained(train, device)
 
 print("Building model...")
