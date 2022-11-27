@@ -33,3 +33,9 @@ def get_pretrained(train_data, device):
     pretrain_resnet(resnet, train_data, device)
 
     return resnet
+
+
+def get_resnet(device):
+    resnet = build_res_unet(device)
+
+    return resnet

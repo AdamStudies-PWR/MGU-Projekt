@@ -14,7 +14,7 @@ class Network(nn.Module):
         self.device = device
         self.discriminator = self.make_model(Discriminator())
 
-        if resnet is not None:
+        if resnet is None:
             self.unet = self.make_model(Unet())
         else:
             self.unet = resnet
@@ -78,7 +78,7 @@ class Network(nn.Module):
         self.set_required_grads(self.discriminator, True)
         self.opt_2.zero_grad()
         self.backward_1()
-        self.opt_2.step()\
+        self.opt_2.step()
         
         self.unet.train()
         self.set_required_grads(self.discriminator, False)

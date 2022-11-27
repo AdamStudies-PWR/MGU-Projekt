@@ -1,5 +1,8 @@
+# USAGE
+# python train_resnet.py [1]
+# path to folder containing training data
+
 import os
-import shutil
 import sys
 import torch
 
@@ -56,7 +59,7 @@ train_model(model, train, validate)
 
 print("Saving model...")
 if os.path.exists(MODEL_PATH):
-    shutil.rmtree(MODEL_PATH)
+    os.remove(MODEL_PATH)
 
 if not os.path.exists(MODEL_FOLDER):
     os.mkdir(MODEL_FOLDER)

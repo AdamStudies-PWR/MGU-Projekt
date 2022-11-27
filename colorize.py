@@ -1,3 +1,9 @@
+# USAGE
+# python colorize.py [1] [2] [3]
+# [1] - path to image
+# [2] - path to saved model weights
+# [3] - mode | 1 - Unet from Submodules, 2 - Pretrained Resnet18 | optional | default = 1
+
 import os
 import shutil
 import sys
@@ -10,6 +16,10 @@ from skimage.color import lab2rgb
 from torchvision import transforms
 
 from Utilities.model import Network
+from Utilities.pretrain import get_resnet
+
+
+from matplotlib import pyplot as plt
 
 
 RESULT_PATH = "result"
@@ -23,7 +33,7 @@ def get_images(batch, cpu):
     for img in batch:
         img = lab2rgb(img)
         images.append(img)
-    return images
+    return np.stack(images, axis=0)
 
 
 args = sys.argv
@@ -43,10 +53,20 @@ if not os.path.exists(model_path) and not os.path.isfile(model_path):
     print("Invalid model file - run train.py first")
     exit(0)
 
+version = 1
+if len(args) >= 4:
+    version = args[3]
+
+print("Seraching for device...")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print("Got device: " + str(device))
 
 print("Loading model...")
-model = Network()
+resnet = None
+if version == "2":
+    resnet = get_resnet(device)
+
+model = Network(device, resnet=resnet)
 model.load_state_dict(torch.load(model_path, map_location=device))
 
 img = Image.open(path)
@@ -56,7 +76,7 @@ model.eval()
 print("Colorizning image...")
 with torch.no_grad():
     predicates = model.unet(tensor.unsqueeze(0).to(device))
-colorized = get_images(tensor.unsqueeze(0), predicates.cpu())
+colorized = get_images(tensor.unsqueeze(0), predicates.cpu())[0]
 
 print("Saving result...")
 
@@ -66,10 +86,10 @@ os.mkdir(RESULT_PATH)
 
 filename = os.path.basename(path)
 filename = os.path.join(RESULT_PATH, filename)
-counter = 0
-for img in colorized:
-    img = Image.fromarray(np.uint8(img))
-    img.save(filename + "-colorized" + str(counter) + ".png")
-    counter = counter + 1
+
+plt.imshow(colorized)
+
+colorized = Image.fromarray(np.uint8(colorized * 255))
+colorized.save(filename + "-colorized.png")
 
 print("Finished")
