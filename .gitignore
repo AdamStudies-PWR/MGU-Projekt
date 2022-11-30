@@ -130,5 +130,16 @@ dmypy.json
 
 # Neural network
 .model/
+model
 model.pt
 result/
+.checkpoints/
+checkpoints
+.cifar-10-batches-py/
+cifar-10-batches-py
+cifar-10-python.tar.gz
+.images/
+images
+labels.txt
+./outputs
+outputs
