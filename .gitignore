@@ -134,3 +134,10 @@ model/
 model.pt
 resnet-model.pt
 result/
+.cifar-10-batches-py/
+cifar-10-batches-py
+cifar-10-python.tar.gz
+.ResNet18_color/
+ResNet18_color
+.ResNet18_gray/
+ResNet18_gray
