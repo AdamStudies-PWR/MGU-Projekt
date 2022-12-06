@@ -142,4 +142,9 @@ cifar-10-python.tar.gz
 images
 labels.txt
 ./outputs
-outputs
+outputs	
+./imgs
+imgs
+./outputs2
+outputs2
+
