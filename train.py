@@ -1,66 +1,78 @@
 # USAGE
-# python train_resnet.py [1]
-# path to folder containing training data
+# python train_resnet.py [1] [2]
+# [1] - path to folder containing training data (colour)
+# [2] - path to folder containing validation data (black nad white)
 
 import os
-import sys
 import torch
+import sys
 
-from alive_progress import alive_bar
-
-from Utilities.local_dataset import make_dataloader
-from Utilities.model import Network
-
-
-MODEL_FOLDER = "model"
-MODEL_PATH = os.path.join(MODEL_FOLDER, "model.pt")
+from Utils.dataloaders import make_dataloaders
+from Utils.models import MainModel
+from Utils.utils import update_losses, log_results, visualize, create_loss_meters
 
 
-# maybe add some prints here
-def train_model(model, train_data, val_data, epochs=100):
-    data = next(iter(val_data))
-    for i in range(epochs):
-        print("[" + str(i) + "/" + str(epochs) + "]")
-        with alive_bar(len(train_data)) as bar:
-            for data in train_data:
-                model.set_up_input(data)
-                model.optimize()
-                bar()
-    
+MODEL_PATH = "./model"
+
+
+def train_model(model, train_dl, val_dl, epochs, display_every=200):
+    data = next(iter(val_dl)) # getting a batch for visualizing the model output after fixed intrvals
+    for e in range(epochs):
+        loss_meter_dict = create_loss_meters() # function returing a dictionary of objects to 
+        i = 0                                  # log the losses of the complete network
+        for data in train_dl:
+            model.setup_input(data) 
+            model.optimize()
+            update_losses(model, loss_meter_dict, count=data['L'].size(0)) # function updating the log objects
+            i += 1
+            if i % display_every == 0:
+                print(f"\nEpoch {e+1}/{epochs}")
+                print(f"Iteration {i}/{len(train_dl)}")
+                log_results(loss_meter_dict) # function to print out the losses
+                visualize(model, data, save=False) # function displaying the model's outputs
+
 
 args = sys.argv
-
-if len(args) <= 1:
-    print("No path provided - aborting!")
+if len(args) <= 2:
+    print("Not enough arguments. Please provide train and validate datasets path")
     exit(0)
 
-path = args[1]
+train_paths = args[1]
+val_paths = args[1]
 
-if not os.path.exists(path) and not os.path.isdir(path):
-    print("Invalid path")
+if not os.path.exists(train_paths) or not os.path.isdir(train_paths):
+    print("Invalid train path")
     exit(0)
 
-print("Creating data loaders...")
-train = make_dataloader(os.path.join(path, "bnw"))
-validate = make_dataloader(os.path.join(path, "colour"))
+if not os.path.exists(val_paths) or not os.path.isdir(val_paths):
+    print("Invalid validation path")
+    exit(0)
 
-print("Seraching for device...")
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print("Got device: " + str(device))
+print("Got train path: " + train_paths)
+print("Got validate path: " + val_paths)
+
+print("Preparing data loaders...")
+train_dl = make_dataloaders(paths=train_paths, split='train')
+val_dl = make_dataloaders(paths=val_paths, split='val')
+
+data = next(iter(train_dl))
+Ls, abs_ = data['L'], data['ab']
+print(Ls.shape, abs_.shape)
+print(len(train_dl), len(val_dl))
 
 print("Building model...")
-model = Network(device)
+model = MainModel()
 
 print("Training model...")
-train_model(model, train, validate)
+train_model(model, train_dl, val_dl, 100)
 
-print("Saving model...")
-if os.path.exists(MODEL_PATH):
+print("Saving data...")
+if os.path.exists(MODEL_PATH + "/model.pt"):
     os.remove(MODEL_PATH)
 
-if not os.path.exists(MODEL_FOLDER):
-    os.mkdir(MODEL_FOLDER)
+if not os.path.exists(MODEL_PATH):
+    os.mkdir(MODEL_PATH)
 
-torch.save(model.state_dict(), MODEL_PATH)
+torch.save(model.state_dict(), MODEL_PATH + "/model.pt")
 
 print("Finished")
