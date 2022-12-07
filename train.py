@@ -1,7 +1,8 @@
 # USAGE
-# python train_resnet.py [1] [2]
-# [1] - path to folder containing training data (colour)
-# [2] - path to folder containing validation data (black nad white)
+# python train_resnet.py [1] [2] [3]
+# [1] - path to folder containing training data (black nad white)
+# [2] - path to folder containing validation data (colour)
+# [3] - (optional, default=2) 1 - use pretrained resnet | 2 use custom unet
 
 import os
 import torch
@@ -10,9 +11,12 @@ import sys
 from Utils.dataloaders import make_dataloaders
 from Utils.models import MainModel
 from Utils.utils import update_losses, log_results, visualize, create_loss_meters
+from Utils.pretrain import get_pretrained
 
 
 MODEL_PATH = "./model"
+MODEL_NAME = "/model.pt"
+MODEL_NAME_RESNET = "/model-resnet18.pt"
 
 
 def train_model(model, train_dl, val_dl, epochs, display_every=200):
@@ -38,7 +42,7 @@ if len(args) <= 2:
     exit(0)
 
 train_paths = args[1]
-val_paths = args[1]
+val_paths = args[2]
 
 if not os.path.exists(train_paths) or not os.path.isdir(train_paths):
     print("Invalid train path")
@@ -60,19 +64,34 @@ Ls, abs_ = data['L'], data['ab']
 print(Ls.shape, abs_.shape)
 print(len(train_dl), len(val_dl))
 
+mode = "2"
+if len(args) == 4:
+    mode = args[3]
+
 print("Building model...")
-model = MainModel()
+model = None
+result_path = ""
+if mode == "2":
+    result_path = MODEL_NAME
+    model = MainModel()
+else:
+    result_path = MODEL_NAME_RESNET
+    pretrained = get_pretrained(train_dl)
+    model = MainModel(net_G=pretrained)
 
 print("Training model...")
-train_model(model, train_dl, val_dl, 100)
+if mode == "2":
+    train_model(model, train_dl, val_dl, 100)
+else:
+    train_model(model, train_dl, val_dl, 20)
 
 print("Saving data...")
-if os.path.exists(MODEL_PATH + "/model.pt"):
+if os.path.exists(MODEL_PATH + result_path):
     os.remove(MODEL_PATH)
 
 if not os.path.exists(MODEL_PATH):
     os.mkdir(MODEL_PATH)
 
-torch.save(model.state_dict(), MODEL_PATH + "/model.pt")
+torch.save(model.state_dict(), MODEL_PATH + result_path)
 
 print("Finished")
