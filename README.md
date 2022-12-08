@@ -3,7 +3,7 @@ Projekt na Metody Głębokiego Uczenia - PWR
 
 # Dataset
 
-Link: 
+Link: https://drive.google.com/drive/folders/1ry6j1B4xn7m3mxagtzHdQSNwFCMMxngB?usp=sharing
 
 Struktura:
 * test [859]
