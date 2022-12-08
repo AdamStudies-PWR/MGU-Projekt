@@ -4,6 +4,9 @@ import sys
 import cv2
 
 
+SIZE = 64
+
+
 args  = sys.argv
 
 if len(args) <= 1:
@@ -16,7 +19,7 @@ if not os.path.exists(path):
     print("Invalid path")
     exit(0)
 
-bnw = os.path.join(path, "bnw")
+bnw = os.path.join(path, "black_and_white")
 colour = os.path.join(path, "colour")
 
 os.makedirs(bnw)
@@ -32,8 +35,9 @@ for file in os.listdir(path):
 
         hc = img[:, :cutoff]
         hbnw = img[:, cutoff:]
-        hc = cv2.resize(hc, [256, 256], interpolation=cv2.INTER_AREA)
-        hbnw = cv2.resize(hbnw, [256, 256], interpolation=cv2.INTER_AREA)
+        hc = cv2.resize(hc, [SIZE, SIZE], interpolation=cv2.INTER_AREA)
+        hbnw = cv2.resize(hbnw, [SIZE, SIZE], interpolation=cv2.INTER_AREA)
 
         cv2.imwrite(os.path.join(bnw, file), hbnw)
         cv2.imwrite(os.path.join(colour, file), hc)
+        os.remove(filepath)
