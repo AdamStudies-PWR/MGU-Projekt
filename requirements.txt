@@ -1,8 +1,8 @@
-alive_progress
-fastai
+jupyter
 numpy
 opencv-python
 pillow
 scikit-image
+matplotlib
 torch
 torchvision
