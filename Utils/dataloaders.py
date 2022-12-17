@@ -1,14 +1,17 @@
-import os
 import numpy as np
+import os
 
 from PIL import Image
 from skimage.color import rgb2lab
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 
-SIZE = 256
-class ColorizationDataset(Dataset):
-    def __init__(self, paths, split='train'):
+
+SIZE = 64
+
+
+class LocalDataset(Dataset):
+    def __init__(self, folder, split='train'):
         if split == 'train':
             self.transforms = transforms.Compose([
                 transforms.Resize((SIZE, SIZE),  transforms.InterpolationMode.BICUBIC),
@@ -16,29 +19,26 @@ class ColorizationDataset(Dataset):
             ])
         elif split == 'val':
             self.transforms = transforms.Resize((SIZE, SIZE),  transforms.InterpolationMode.BICUBIC)
-        
-        self.split = split
-        self.size = SIZE
-        self.paths = [os.path.join(paths, file) for file in os.listdir(paths) if os.path.isfile(
-            os.path.join(paths, file))]
+
+        self.dataset = [os.path.join(folder, file) for file in os.listdir(folder) if os.path.isfile(
+            os.path.join(folder, file))]
     
     def __getitem__(self, idx):
-        img = Image.open(self.paths[idx]).convert("RGB")
-        # img = self.transforms(img)
+        img = Image.open(self.dataset[idx]).convert("RGB")
         img = np.array(img)
-        img_lab = rgb2lab(img).astype("float32") # Converting RGB to L*a*b
-        img_lab = transforms.ToTensor()(img_lab)
-        L = img_lab[[0], ...] / 50. - 1. # Between -1 and 1
-        ab = img_lab[[1, 2], ...] / 110. # Between -1 and 1
-        
-        return {'L': L, 'ab': ab}
+        lab = rgb2lab(img).astype("float32") # Conversion to Lab colour space
+        tensor = transforms.ToTensor()(lab)
+        L = tensor[[0], ...] / 50. - 1.
+        AB = tensor[[1, 2], ...] / 110.
+
+        return {'L': L, 'AB': AB}
     
     def __len__(self):
-        return len(self.paths)
+        return len(self.dataset)
 
 
-def make_dataloaders(batch_size=16, n_workers=4, pin_memory=True, **kwargs): # A handy function to make our dataloaders
-    dataset = ColorizationDataset(**kwargs)
+def make_DataLoader(batch_size=16, n_workers=4, pin_memory=True, **kwargs):
+    dataset = LocalDataset(**kwargs)
     dataloader = DataLoader(dataset, batch_size=batch_size, num_workers=n_workers,
                             pin_memory=pin_memory)
     return dataloader
