@@ -6,3 +6,5 @@ scikit-image
 matplotlib
 torch
 torchvision
+tensorboard
+torchsummary
