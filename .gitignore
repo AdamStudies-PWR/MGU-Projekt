@@ -15,3 +15,15 @@ venv/
 .__pycache__/
 __pycache__
 __pycache__/
+
+# model
+.model
+.model/
+model
+model/
+
+# result
+.result
+.result/
+result
+result/
