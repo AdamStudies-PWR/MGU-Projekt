@@ -29,15 +29,15 @@ class Unet(nn.Module):
         self.mb4_conv2d = nn.Conv2d(200, 200, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
         self.mb4_batch_norm2d_1 = nn.BatchNorm2d(200, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
 
-        # Fifth middle block coding
-        self.mb5_leaky_relu = nn.LeakyReLU(negative_slope=0.2, inplace=True)
-        self.mb5_conv2d = nn.Conv2d(200, 200, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
-        self.mb5_batch_norm2d_1 = nn.BatchNorm2d(200, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        # # Fifth middle block coding
+        # self.mb5_leaky_relu = nn.LeakyReLU(negative_slope=0.2, inplace=True)
+        # self.mb5_conv2d = nn.Conv2d(200, 200, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
+        # self.mb5_batch_norm2d_1 = nn.BatchNorm2d(200, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
 
-        # Sixth middle block coding
-        self.mb6_leaky_relu = nn.LeakyReLU(negative_slope=0.2, inplace=True)
-        self.mb6_conv2d = nn.Conv2d(200, 200, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
-        self.mb6_batch_norm2d_1 = nn.BatchNorm2d(200, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        # # Sixth middle block coding
+        # self.mb6_leaky_relu = nn.LeakyReLU(negative_slope=0.2, inplace=True)
+        # self.mb6_conv2d = nn.Conv2d(200, 200, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
+        # self.mb6_batch_norm2d_1 = nn.BatchNorm2d(200, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
 
         # Middle block
         self.mb_leaky_relu = nn.LeakyReLU(negative_slope=0.2, inplace=True)
@@ -46,17 +46,17 @@ class Unet(nn.Module):
         self.mb_conv_transpose2d = nn.ConvTranspose2d(200, 200, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
         self.mb_batch_norm2d = nn.BatchNorm2d(200, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
 
-        # Sixth middle block decoding
-        self.mb6_relu = nn.ReLU(inplace=True)
-        self.mb6_conv_transpose2d = nn.ConvTranspose2d(400, 200, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
-        self.mb6_batch_norm2d_2 = nn.BatchNorm2d(200, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-        self.mb6_dropout = nn.Dropout(p=0.5, inplace=False)
+        # # Sixth middle block decoding
+        # self.mb6_relu = nn.ReLU(inplace=True)
+        # self.mb6_conv_transpose2d = nn.ConvTranspose2d(400, 200, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
+        # self.mb6_batch_norm2d_2 = nn.BatchNorm2d(200, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        # self.mb6_dropout = nn.Dropout(p=0.5, inplace=False)
 
-        # Fifth middle block decoding
-        self.mb5_relu = nn.ReLU(inplace=True)
-        self.mb5_conv_transpose2d = nn.ConvTranspose2d(400, 200, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
-        self.mb5_batch_norm2d_2 = nn.BatchNorm2d(200, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-        self.mb5_dropout = nn.Dropout(p=0.5, inplace=False)
+        # # Fifth middle block decoding
+        # self.mb5_relu = nn.ReLU(inplace=True)
+        # self.mb5_conv_transpose2d = nn.ConvTranspose2d(400, 200, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
+        # self.mb5_batch_norm2d_2 = nn.BatchNorm2d(200, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        # self.mb5_dropout = nn.Dropout(p=0.5, inplace=False)
 
         # Fourth middle block decoding
         self.mb4_relu = nn.ReLU(inplace=True)
@@ -122,17 +122,17 @@ class Unet(nn.Module):
         x = self.mb4_batch_norm2d_1(x)
         mb4_connection = x
 
-        # Fifth middle block coding
-        x = self.mb5_leaky_relu(x)
-        x = self.mb5_conv2d(x)
-        x = self.mb5_batch_norm2d_1(x)
-        mb5_connection = x
+        # # Fifth middle block coding
+        # x = self.mb5_leaky_relu(x)
+        # x = self.mb5_conv2d(x)
+        # x = self.mb5_batch_norm2d_1(x)
+        # mb5_connection = x
 
-        # Sixth middle block coding
-        x = self.mb6_leaky_relu(x)
-        x = self.mb6_conv2d(x)
-        x = self.mb6_batch_norm2d_1(x)
-        mb6_connection = x
+        # # Sixth middle block coding
+        # x = self.mb6_leaky_relu(x)
+        # x = self.mb6_conv2d(x)
+        # x = self.mb6_batch_norm2d_1(x)
+        # mb6_connection = x
 
         # Middle block
         x = self.mb_leaky_relu(x)
@@ -141,17 +141,17 @@ class Unet(nn.Module):
         x = self.mb_conv_transpose2d(x)
         x = self.mb_batch_norm2d(x)
 
-        # Sixth middle block decoding
-        x = self.mb6_relu(torch.cat([mb6_connection, x], 1))
-        x = self.mb6_conv_transpose2d(x)
-        x = self.mb6_batch_norm2d_2(x)
-        x = self.mb6_dropout(x)
+        # # Sixth middle block decoding
+        # x = self.mb6_relu(torch.cat([mb6_connection, x], 1))
+        # x = self.mb6_conv_transpose2d(x)
+        # x = self.mb6_batch_norm2d_2(x)
+        # x = self.mb6_dropout(x)
 
-        # Fifth middle block decoding
-        x = self.mb5_relu(torch.cat([mb5_connection, x], 1))
-        x = self.mb5_conv_transpose2d(x)
-        x = self.mb5_batch_norm2d_2(x)
-        x = self.mb5_dropout(x)
+        # # Fifth middle block decoding
+        # x = self.mb5_relu(torch.cat([mb5_connection, x], 1))
+        # x = self.mb5_conv_transpose2d(x)
+        # x = self.mb5_batch_norm2d_2(x)
+        # x = self.mb5_dropout(x)
 
         # Fourth middle block decoding
         x = self.mb4_relu(torch.cat([mb4_connection, x], 1))

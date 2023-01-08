@@ -15,6 +15,9 @@ MODEL_SAVE_PATH = 'model/model.pt'
 RESULT_PATH = 'result/'
 
 
+IMG_SIZE = 64
+
+
 def lab_to_rgb(L, ab):
     L = (L + 1.) * 50.
     ab = ab * 110.
@@ -43,7 +46,7 @@ model = Unet().to(device)
 model.load_state_dict(torch.load(MODEL_SAVE_PATH, map_location=device))
 
 img = Image.open(img_path)
-img = img.resize((256, 256))
+img = img.resize((IMG_SIZE, IMG_SIZE))
 tensor = transforms.ToTensor()(img)[:1] * 2. - 1.
 
 model.eval()

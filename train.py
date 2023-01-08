@@ -13,7 +13,8 @@ from models import Unet, Discriminator
 
 # Constants that need to be set
 MODEL_SAVE_PATH = 'model/'
-DATASET_PATH = 'dataset/train/' # Dir with 256x256 images
+DATASET_PATH = 'dataset/small/train/' # Dir with 64x64 images
+# DATASET_PATH = 'dataset/large/train/' # Dir with 256x256 images
 EPOCHS = 100
 
 # Dataset that load images in lab format
