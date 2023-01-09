@@ -18,3 +18,9 @@ python3 -m venv venv/
 ```
 pip3 install -r requirements.txt
 ```
+
+For training
+
+```
+jupyter lab --notebook-dir=.
+```
