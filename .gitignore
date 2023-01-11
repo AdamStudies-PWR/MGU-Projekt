@@ -5,31 +5,30 @@ dataset
 dataset/
 
 # venv
-.venv
-.venv/
 venv
 venv/
 
 # python
-.__pycache__
-.__pycache__/
 __pycache__
 __pycache__/
 
 # model
-.model
-.model/
 model
 model/
 
 # result
-.result
-.result/
+
 result
 result/
 
 # development
-.temp
-.temp/
 temp
 temp/
+
+# logging
+runs
+runs/
+
+# notebook
+.ipynb_checkpoints/
+.ipynb_checkpoints
