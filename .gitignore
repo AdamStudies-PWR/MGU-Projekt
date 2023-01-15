@@ -1,3 +1,11 @@
+#custom
+color/*.jpg
+grey/*.jpg
+runs/
+outputs/
+checkpoints/
+oldruns/
+*.csv
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
