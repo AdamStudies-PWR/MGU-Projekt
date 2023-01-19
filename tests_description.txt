@@ -16,13 +16,14 @@
 6_1 - dodatkowa conv w enkoderze i bottlenecku
 7 - więcej warstw conv w enkoderze, dekoderze i bottlenecku względem 3_1
 7_1 - dodatkowa conv w enkoderze, dekoderze i bottlenecku
-8 - resnet względem 5, połączenie residualne nie zmienia liczby kanałów
-9 - resnet względem 5, połączenie residualne zmienia liczbę kanałów
+8 - dodanie skip_connection względem 5, skip_connection nie zmienia liczby kanałów
+9 - dodanie skip_connection względem 5, skip_connection zmienia liczbę kanałów
 
+nowa podstawowa sieć w teście 10; od 10 do 13_5 z normalizacją zbioru danych
 10 - cifar10, bazowa liczba kanałów 16 w conv, stride=2 w enkoderze, 3 warstwy w enc i 4 w dec, relu, batchnorm, normalizacja
-10_1 - bez normalizacji
+10_1 - 10 bez normalizacji
 11 - cifar10, bazowa liczba kanałów 16 w conv, stride=2 w enkoderze, 2 warstwy w enc i 3 w dec, relu, batchnorm, normalizacja
-11_1 - bez normalizacji
+11_1 - 11 bez normalizacji
 12 - zmiana liczby kanałów względem 11, bazowa liczba kanałów 32
 12_1 - bazowa liczba kanałów 64
 12_2 - bazowa liczba kanałów 128
@@ -33,20 +34,22 @@
 13_3 - dropout .5 w zewnętrzych częściach sieci, .25 w środku
 13_4 - dropout .25 w encoderze, .5 w decoderze
 13_5 - dropout .5 w encoderze, .25 w decoderze
-14 - liczba kanałów 64 (21_1) i dorpout .5 (13_1)
+14 - liczba kanałów 64 (21_1) i dorpout .5 (13_1), bez normalizacji
 14_1 - 14 ze zmianą miejscami ostatniej interpolacji i ostatniej convtranspose 
 14_2 - 14_1 z sumowaniem warstw podobnym między enc i dec
 15 - 14_2 z avgpool zamiast stride=2 w conv
 15_1 - 15 z dropout za avgpool zamiast za relu
 15_2 - 15 z leaky relu zamiast relu
 15_3 - 15_1 z leaky relu zamiast relu
-15_4 - 15_2 z połączeniem residualnym ze zmianą liczby kanałów
+15_4 - 15_2 z skip_connection ze zmianą liczby kanałów
 15_5 - 15_4 z sumowaniem warstw między enc i dec
 15_6 - powrót do sieci 3_1 żeby sprawdzić czy dobrze podłączyłem nowe miary błędów (kwiatki)
 15_7 - powrót do sieci 3_1 żeby sprawdzić czy dobrze podłączyłem nowe miary błędów (cifar10)
 15_8 - splycenie sieci 15_7 o po 1 conv w enc i dec
-16 - przepisanie 15_8 do functional
-16_1, 16_2, 16_3 - badanie różnicy między warstwami sequential i functional
+16 - przepisanie 15_8 do functional, ale warstwy functional
+16_1 - przepisanie warstw sequential do self
+16_2 - po 1 warstwie każdego typu w self
+16_3 - warstwy functional
 17 - zmiana liczby kanałów względem 16_3, bazowa liczba kanałów 32
 17_1 - bazowa liczba kanałów 64
 17_2 - bazowa liczba kanałów 128
@@ -71,8 +74,8 @@
 22_3 - 21_1 z dodatkową augumentacją verticalflip, rotation i zmianą kolorów o 0.05
 23 - 22_3 z sdg lr=1e-2, momentum=0.9 zamiast adam
 23_1 - 22_3 z sdg lr=1e-2, momentum=0.923 - 22_3 z sdg lr=1e-2, momentum=0.9 zamiast adam zamiast adam
-24 - 22_3 z 2 warstwami conw w residualnym
-24_1 - 22_3 z 3 warstwami conw w residualnym
+24 - 22_3 z 2 warstwami conw równolegle do skip_connection
+24_1 - 22_3 z 3 warstwami conw równolegle do skip_connection
 25 - 22_3 z PSNR jako loss
 25_1 - 22_3 z SSIM jako loss
 26 - 22_3 sumowanie warstw z enc i dec (dropout zamiast maxpool) (konieczna była zmiana w strukturze sieci)
