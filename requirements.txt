@@ -1,4 +1,5 @@
 jupyterlab
+matplotlib
 numpy
 pillow
 scikit-image

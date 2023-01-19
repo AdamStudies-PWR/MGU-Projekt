@@ -28,6 +28,8 @@ temp/
 # logging
 runs
 runs/
+tensorboard
+tensorboard/
 
 # notebook
 .ipynb_checkpoints/
