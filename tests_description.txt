@@ -80,5 +80,9 @@
 
 
 
+Fusion layers working:
+22_3, 27, 16_2, 14_2
+
+
 
 
